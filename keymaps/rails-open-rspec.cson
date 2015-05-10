@@ -1,2 +1,2 @@
 'atom-text-editor':
-  'ctrl-alt-o': 'rails-open-rspec:open-rspec-file'
+  'cmd-alt-o': 'rails-open-rspec:open-rspec-file'
