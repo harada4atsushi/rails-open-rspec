@@ -6,7 +6,7 @@
   "activationCommands": {
     "atom-workspace": ["rails-open-rspec:open-rspec-file"]
   },
-  "repository": "https://github.com/atom/rails-open-rspec",
+  "repository": "https://github.com/harada4atsushi/rails-open-rspec",
   "license": "MIT",
   "engines": {
     "atom": ">=0.174.0 <2.0.0"
