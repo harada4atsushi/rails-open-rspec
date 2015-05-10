@@ -1,16 +1,17 @@
 {
   "name": "rails-open-rspec",
   "main": "./lib/rails-open-rspec",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "open rspec file by current file.",
   "activationCommands": {
-    "atom-workspace": ["rails-open-rspec:open-rspec-file"]
+    "atom-workspace": [
+      "rails-open-rspec:open-rspec-file"
+    ]
   },
   "repository": "https://github.com/harada4atsushi/rails-open-rspec",
   "license": "MIT",
   "engines": {
     "atom": ">=0.174.0 <2.0.0"
   },
-  "dependencies": {
-  }
+  "dependencies": {}
 }
