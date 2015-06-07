@@ -4,25 +4,12 @@ RailsOpenRspecView = require './rails-open-rspec-view'
 fs = require 'fs'
 Path = require 'path'
 
-RAILS_ROOT = atom.project.resolve('./')
+RAILS_ROOT = atom.project.getPaths()[0]
 
 module.exports =
-  #railsOpenRspecView: null
-  #modalPanel: null
-  #subscriptions: null
-
   activate: (state) ->
     atom.commands.add 'atom-workspace', "rails-open-rspec:open-rspec-file", => @openSpec()
 
-  ###
-  deactivate: ->
-    @modalPanel.destroy()
-    @subscriptions.dispose()
-    @railsOpenRspecView.destroy()
-
-  serialize: ->
-    railsOpenRspecViewState: @railsOpenRspecView.serialize()
-  ###
   openSpec: ->
     console.log "RAIL_ROOT => #{RAILS_ROOT}"
 
