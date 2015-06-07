@@ -1,5 +1,15 @@
-# rails-open-rspec package
+# Rails Open Rspec Package
 
-A short description of your package.
+![Rails Open Rspec](https://raw.github.com/harada4atsushi/rails-open-rspec/master/rails-open-rspec.gif)
 
-![A screenshot of your package](https://f.cloud.github.com/assets/69169/2290250/c35d867a-a017-11e3-86be-cd7c5bf3ff9b.gif)
+## Installation
+```sh
+apm install rails-open-rspec
+```
+or find it in the Packages tab under settings
+
+## Usage
+`option-cmd-o` or **Rails Open Rspec: Open Rspec File** in the Command Palette.
+
+Open rspec file from current file to window split right.  
+If current file is spec file, open production file to window split left.
