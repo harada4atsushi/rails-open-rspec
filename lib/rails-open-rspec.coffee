@@ -16,12 +16,14 @@ module.exports =
     editor = atom.workspace.getActiveTextEditor()
     currentFilepath = editor.getPath()
     openFilePath = @findFilepath(currentFilepath)
+    console.log openFilePath
 
     if fs.existsSync openFilePath
       console.log 'file exists!'
-      direction = 'left'
-      direction = 'right' if @isSpecFile(openFilePath)
-      atom.workspace.open(openFilePath, split: direction)
+      atom.workspace.open(openFilePath, split: @direction(openFilePath))
+    else if openFilePath != null
+      console.log 'file not exists!'
+      atom.workspace.open(openFilePath, split: 'right')
 
   findFilepath: (currentFilepath) ->
     relativePath = currentFilepath.substring(RAILS_ROOT.length)
@@ -33,7 +35,16 @@ module.exports =
       openFilePath = relativePath.replace /\.rb$/, '_spec.rb'
       openFilePath = openFilePath.replace /^\/app\//, "/spec/"
 
-    Path.join RAILS_ROOT, openFilePath
+    if relativePath == openFilePath
+      null
+    else
+      Path.join RAILS_ROOT, openFilePath
 
   isSpecFile: (path) ->
     /_spec\.rb/.test(path)
+
+  direction: (filePath) ->
+    if @isSpecFile(filePath)
+      'right'
+    else
+      'left'
