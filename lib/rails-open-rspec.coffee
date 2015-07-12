@@ -1,5 +1,6 @@
 RailsOpenRspecView = require './rails-open-rspec-view'
 {CompositeDisposable} = require 'atom'
+{TextEditor} = require 'atom'
 
 fs = require 'fs'
 Path = require 'path'
@@ -18,13 +19,8 @@ module.exports =
 
     return if openFilePath == null
 
-    openOptions = {}
-    if @isSinglePane()
-      openOptions = { split: 'right' }
-    else
-      atom.workspace.activateNextPane()
-
-    atom.workspace.open(openFilePath, openOptions)
+    lines = editor.getBuffer().getLines()
+    @openWithWrite(openFilePath, lines)
 
   findFilepath: (currentFilepath) ->
     relativePath = currentFilepath.substring(RAILS_ROOT.length)
@@ -46,3 +42,24 @@ module.exports =
 
   isSinglePane: ->
     atom.workspace.getPanes().length == 1
+
+  getMethodNames: (lines) ->
+    defLines = lines.map (line) ->
+      arr = line.match(/^\s*def ([^\(]*)/)
+      arr[1] if arr
+
+    defLines.filter (line) -> line?
+
+  openWithWrite: (openFilePath, lines) ->
+    openOptions = {}
+    if @isSinglePane()
+      openOptions = { split: 'right' }
+    else
+      atom.workspace.activateNextPane()
+
+    methodNames = @getMethodNames(lines)
+    promise = atom.workspace.open(openFilePath, openOptions)
+    promise.then (editor) ->
+      if editor.isEmpty()
+        editor.insertText("Defined Methods\n")
+        editor.insertText(methodNames.join("\n"))
