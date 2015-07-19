@@ -7,11 +7,17 @@ Path = require 'path'
 
 RAILS_ROOT = atom.project.getPaths()[0]
 
+String::camelize =->
+  @replace /(^|\-|\_)(\w)/g, (a,b,c)->
+    c.toUpperCase()
+
+
 module.exports =
   activate: (state) ->
     atom.commands.add 'atom-workspace', "rails-open-rspec:open-rspec-file", => @openSpec()
 
   openSpec: ->
+    #camelize('aaaa_uuuu')
     editor = atom.workspace.getActiveTextEditor()
     currentFilepath = editor.getPath()
     openFilePath = @findFilepath(currentFilepath)
@@ -58,8 +64,36 @@ module.exports =
       atom.workspace.activateNextPane()
 
     methodNames = @getMethodNames(lines)
+    basename = Path.basename(openFilePath)
     promise = atom.workspace.open(openFilePath, openOptions)
+
+    # check file type
+    dirName = Path.dirname(openFilePath)
+    if /\/models\//.test(dirName)
+      type = 'model'
+    else if /\/controllers\//.test(dirName)
+      type = 'controller'
+    else if /\/services\//.test(dirName)
+      type = 'service'
+    else
+      type = null
+
+    # TODO refactoring
     promise.then (editor) ->
       if editor.isEmpty()
-        editor.insertText("Defined Methods\n")
-        editor.insertText(methodNames.join("\n"))
+        className = basename.replace(/\_spec.rb$/, '').camelize()
+        atom.notifications.addInfo("Generate new spec")
+        editor.insertText("require 'rails_helper'\n")
+        editor.insertNewline()
+        editor.insertText("RSpec.describe #{className}")
+
+        if type?
+          editor.insertText(", :type => :#{type} do\n")
+        else
+          editor.insertText(" do\n")
+
+        for methodName in methodNames
+          editor.insertText("  describe '##{methodName}' do\n", autoIndent: false)
+          editor.insertText("  end\n", autoIndent: false)
+          editor.insertNewline()
+        editor.insertText("end")
