@@ -56,6 +56,12 @@ module.exports =
 
     defLines.filter (line) -> line?
 
+  helperNameBeRequire: ->
+    if fs.existsSync("#{RAILS_ROOT}/spec/rails_helper.rb")
+      'rails_helper'
+    else
+      'spec_helper'
+
   openWithWrite: (openFilePath, lines) ->
     openOptions = {}
     if @isSinglePane()
@@ -66,6 +72,7 @@ module.exports =
     methodNames = @getMethodNames(lines)
     basename = Path.basename(openFilePath)
     promise = atom.workspace.open(openFilePath, openOptions)
+    helperName = @helperNameBeRequire()
 
     # check file type
     dirName = Path.dirname(openFilePath)
@@ -83,7 +90,7 @@ module.exports =
       if editor.isEmpty()
         className = basename.replace(/\_spec.rb$/, '').camelize()
         atom.notifications.addInfo("Generate new spec")
-        editor.insertText("require 'rails_helper'\n")
+        editor.insertText("require '#{helperName}'\n")
         editor.insertNewline()
         editor.insertText("RSpec.describe #{className}")
 
