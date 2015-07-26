@@ -1,7 +1,7 @@
 {
   "name": "rails-open-rspec",
   "main": "./lib/rails-open-rspec",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "open rspec file by current file.",
   "activationCommands": {
     "atom-workspace": [
