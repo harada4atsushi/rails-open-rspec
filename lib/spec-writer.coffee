@@ -6,17 +6,16 @@ RAILS_ROOT = atom.project.getPaths()[0]
 
 module.exports =
 class SpecWriter
-  constructor: (@editor, @methodNames) ->
+  constructor: (@editor, @sourceEditor) ->
     @specType = @judgeSpecType()
     @helperName = @helperNameBeRequire()
+    @methodNames = @detectMethodNames()
+    @className = @detectClassName()
 
   write: ->
-    basename = Path.basename(@editor.getPath())
-    className = basename.replace(/\_spec.rb$/, '').camelize()
-
     @editor.insertText("require '#{@helperName}'\n")
     @editor.insertNewline()
-    @editor.insertText("RSpec.describe #{className}")
+    @editor.insertText("RSpec.describe #{@className}")
 
     if @specType?
       @editor.insertText(", :type => :#{@specType} do\n")
@@ -40,6 +39,27 @@ class SpecWriter
     else
       type = null
     type
+
+  detectMethodNames: ->
+    lines = @sourceEditor.getBuffer().getLines()
+    defLines = lines.map (line) ->
+      arr = line.match(/^\s*def ([^\(]*)/)
+      arr[1] if arr
+
+    defLines.filter (line) -> line?
+
+  detectClassName: ->
+    #basename = Path.basename(@editor.getPath())
+    #className = basename.replace(/\_spec.rb$/, '').camelize()
+    lines = @sourceEditor.getBuffer().getLines()
+    arr = lines.filter (line) ->
+      /^\s*class\s.*/.test(line)
+
+    return null if arr.count == 0
+
+    classNameLine = arr[0]
+    expResult = classNameLine.match(/^\s*class\s(\S*)/)
+    expResult[1]
 
   helperNameBeRequire: ->
     if Fs.existsSync("#{RAILS_ROOT}/spec/rails_helper.rb")

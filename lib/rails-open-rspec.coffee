@@ -18,14 +18,12 @@ module.exports =
     atom.commands.add 'atom-workspace', "rails-open-rspec:open-rspec-file", => @openSpec()
 
   openSpec: ->
-    editor = atom.workspace.getActiveTextEditor()
-    currentFilepath = editor.getPath()
+    sourceEditor = atom.workspace.getActiveTextEditor()
+    currentFilepath = sourceEditor.getPath()
     openFilePath = @findFilepath(currentFilepath)
 
     return if openFilePath == null
-
-    lines = editor.getBuffer().getLines()
-    @openWithWrite(openFilePath, lines)
+    @openWithWrite(openFilePath, sourceEditor)
 
   findFilepath: (currentFilepath) ->
     relativePath = currentFilepath.substring(RAILS_ROOT.length)
@@ -48,25 +46,17 @@ module.exports =
   isSinglePane: ->
     atom.workspace.getPanes().length == 1
 
-  getMethodNames: (lines) ->
-    defLines = lines.map (line) ->
-      arr = line.match(/^\s*def ([^\(]*)/)
-      arr[1] if arr
-
-    defLines.filter (line) -> line?
-
-  openWithWrite: (openFilePath, lines) ->
+  openWithWrite: (openFilePath, sourceEditor) ->
     openOptions = {}
     if @isSinglePane()
       openOptions = { split: 'right' }
     else
       atom.workspace.activateNextPane()
 
-    methodNames = @getMethodNames(lines)
     promise = atom.workspace.open(openFilePath, openOptions)
 
-    promise.then (editor) ->
-      if editor.isEmpty()
-        specWriter = new SpecWriter(editor, methodNames)
+    promise.then (specEditor) ->
+      if specEditor.isEmpty()
+        specWriter = new SpecWriter(specEditor, sourceEditor)
         atom.notifications.addInfo("Generate new spec")
         specWriter.write()
