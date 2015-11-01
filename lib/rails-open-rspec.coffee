@@ -7,8 +7,6 @@ SpecWriter = require './spec-writer'
 fs = require 'fs'
 Path = require 'path'
 
-RAILS_ROOT = atom.project.getPaths()[0]
-
 String::camelize =->
   @replace /(^|\-|\_)(\w)/g, (a,b,c)->
     c.toUpperCase()
@@ -28,7 +26,8 @@ module.exports =
     @openWithWrite(openFilePath, sourceEditor)
 
   findFilepath: (currentFilepath) ->
-    relativePath = currentFilepath.substring(RAILS_ROOT.length)
+    rootPath = atom.project.getPaths()[0]
+    relativePath = currentFilepath.substring(rootPath.length)
 
     if @isSpecFile(relativePath)
       openFilePath = relativePath.replace /\_spec\.rb$/, '.rb'
@@ -40,7 +39,7 @@ module.exports =
     if relativePath == openFilePath
       null
     else
-      Path.join RAILS_ROOT, openFilePath
+      Path.join rootPath, openFilePath
 
   isSpecFile: (path) ->
     /_spec\.rb/.test(path)

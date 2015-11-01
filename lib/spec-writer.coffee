@@ -1,9 +1,6 @@
 Path = require 'path'
 Fs = require 'fs'
 
-# HACK DRY
-RAILS_ROOT = atom.project.getPaths()[0]
-
 module.exports =
 class SpecWriter
   constructor: (@editor, @sourceEditor) ->
@@ -62,7 +59,8 @@ class SpecWriter
     expResult[1]
 
   helperNameBeRequire: ->
-    if Fs.existsSync("#{RAILS_ROOT}/spec/rails_helper.rb")
+    rootPath = atom.project.getPaths()[0]
+    if Fs.existsSync("#{rootPath}/spec/rails_helper.rb")
       'rails_helper'
     else
       'spec_helper'
