@@ -19,6 +19,8 @@ module.exports =
 
   openSpec: ->
     sourceEditor = atom.workspace.getActiveTextEditor()
+    return if !sourceEditor
+
     currentFilepath = sourceEditor.getPath()
     openFilePath = @findFilepath(currentFilepath)
 
