@@ -13,5 +13,13 @@
   "engines": {
     "atom": ">=0.174.0 <2.0.0"
   },
-  "dependencies": {}
+  "dependencies": {},
+  "configSchema": {
+    "splitPane": {
+      "description": "Open specs side by side with code.",
+      "type": "boolean",
+      "default": true,
+      "order": 1
+    }
+  }
 }
