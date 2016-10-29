@@ -51,10 +51,11 @@ module.exports =
 
   openWithWrite: (openFilePath, sourceEditor) ->
     openOptions = {}
-    if @isSinglePane()
-      openOptions = { split: 'right' }
-    else
-      atom.workspace.activateNextPane()
+    if atom.config.get('rails-open-rspec.splitPane')
+      if @isSinglePane()
+        openOptions = { split: 'right' }
+      else
+        atom.workspace.activateNextPane()
 
     promise = atom.workspace.open(openFilePath, openOptions)
 
